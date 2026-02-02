@@ -10,6 +10,7 @@ This module provisions and configures AWS Simple Email Service (SES) for sending
 - ✅ CloudWatch event destinations (optional)
 - ✅ Email receiving capabilities (optional)
 - ✅ Works with LocalStack for development
+- ✅ DRY tagging with locals pattern
 
 ## Usage
 
@@ -103,3 +104,13 @@ aws --endpoint-url=http://localhost:4566 ses list-identities
 - In AWS production, you need to verify identities via email confirmation
 - DKIM tokens should be added as DNS TXT records for domain verification
 - Configuration sets help track email delivery metrics
+
+## Tagging Strategy
+
+All resources automatically include:
+- `Service`: Service name from variable
+- `Environment`: Environment from variable
+- `ManagedBy`: terraform
+- Custom tags: Merged from `var.tags`
+
+The module uses a locals pattern for consistent tagging across all resources.
