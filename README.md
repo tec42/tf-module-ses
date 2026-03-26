@@ -10,6 +10,7 @@ This module provisions and configures AWS Simple Email Service (SES) for sending
 - ✅ CloudWatch event destinations (optional)
 - ✅ Email receiving capabilities (optional)
 - ✅ Works with LocalStack for development
+- ✅ DRY tagging with locals pattern
 
 ## Usage
 
@@ -85,6 +86,7 @@ aws --endpoint-url=http://localhost:4566 ses list-identities
 | email_identities | List of email addresses to verify | list(string) | [] | no |
 | enable_event_tracking | Enable CloudWatch event tracking | bool | false | no |
 | enable_email_receiving | Enable email receiving | bool | false | no |
+| create_send_policy | Create managed IAM policy for ses:SendEmail / ses:SendRawEmail | bool | true | no |
 | tags | Additional tags | map(string) | {} | no |
 
 ## Outputs
@@ -96,6 +98,7 @@ aws --endpoint-url=http://localhost:4566 ses list-identities
 | configuration_set_arn | ARN of the SES configuration set |
 | dkim_tokens | DKIM tokens for domain verification |
 | receipt_rule_set_name | Name of receipt rule set (if enabled) |
+| send_email_policy_arn | ARN of the managed IAM policy for ses:SendEmail and ses:SendRawEmail (null if create_send_policy = false) |
 
 ## Notes
 
@@ -103,3 +106,13 @@ aws --endpoint-url=http://localhost:4566 ses list-identities
 - In AWS production, you need to verify identities via email confirmation
 - DKIM tokens should be added as DNS TXT records for domain verification
 - Configuration sets help track email delivery metrics
+
+## Tagging Strategy
+
+All resources automatically include:
+- `Service`: Service name from variable
+- `Environment`: Environment from variable
+- `ManagedBy`: terraform
+- Custom tags: Merged from `var.tags`
+
+The module uses a locals pattern for consistent tagging across all resources.
