@@ -50,3 +50,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "create_send_policy" {
+  description = "Whether to create a managed IAM policy for ses:SendEmail and ses:SendRawEmail"
+  type        = bool
+  default     = true
+}

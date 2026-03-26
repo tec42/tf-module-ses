@@ -71,3 +71,30 @@ resource "aws_ses_active_receipt_rule_set" "main" {
 
   rule_set_name = aws_ses_receipt_rule_set.main[0].rule_set_name
 }
+
+# IAM policy document for sending emails
+data "aws_iam_policy_document" "send_email" {
+  count = var.create_send_policy ? 1 : 0
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ses:SendEmail",
+      "ses:SendRawEmail",
+    ]
+
+    resources = [for identity in aws_ses_email_identity.identity : identity.arn]
+  }
+}
+
+# Managed IAM policy for sending emails via SES
+resource "aws_iam_policy" "send_email" {
+  count = var.create_send_policy ? 1 : 0
+
+  name        = "${var.service_name}-ses-send-email-${var.environment}"
+  description = "Allows sending emails via SES for verified identities in ${var.service_name} (${var.environment})"
+  policy      = data.aws_iam_policy_document.send_email[0].json
+
+  tags = local.common_tags
+}

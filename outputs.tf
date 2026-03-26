@@ -25,3 +25,8 @@ output "receipt_rule_set_name" {
   description = "Name of the receipt rule set (if enabled)"
   value       = var.enable_email_receiving ? aws_ses_receipt_rule_set.main[0].rule_set_name : null
 }
+
+output "send_email_policy_arn" {
+  description = "ARN of the managed IAM policy for ses:SendEmail and ses:SendRawEmail (null if create_send_policy = false)"
+  value       = var.create_send_policy ? aws_iam_policy.send_email[0].arn : null
+}
