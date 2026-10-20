@@ -1,10 +1,10 @@
 terraform {
   required_version = ">= 1.7.0"
-  
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = ">= 5.0"
     }
   }
 }
@@ -19,7 +19,7 @@ resource "aws_ses_email_identity" "identity" {
 # Configure DKIM for verified identities
 resource "aws_ses_domain_dkim" "dkim" {
   for_each = toset([
-    for email in var.email_identities : 
+    for email in var.email_identities :
     split("@", email)[1] if length(split("@", email)) > 1
   ])
 
@@ -31,7 +31,7 @@ resource "aws_ses_configuration_set" "main" {
   name = "${var.service_name}-${var.environment}"
 
   reputation_metrics_enabled = true
-  sending_enabled           = true
+  sending_enabled            = true
 }
 
 # Event destination for tracking (optional)
